@@ -3,6 +3,7 @@
 // ==============================
 const btnAll = document.querySelector(".btnWrapper");
 const listHTML = document.querySelector(".list")
+const btnMore = document.querySelector(".more")
 
 // ==============================
 // 🌍 Variables globales
@@ -14,6 +15,7 @@ const current = {
 }
 
 let currentbtn;
+let page = 1;
 
 // ==============================
 // 🎊 Fonctionnalités
@@ -21,7 +23,7 @@ let currentbtn;
 
 async function getSeries(category) {
 	try {
-		const response = await fetch(`https://api.themoviedb.org/3/tv/${category}?api_key=6631e5f1dc96088e0d26b86da29b5b6a&include_adult=false&language=en-US&page=1`);
+		const response = await fetch(`https://api.themoviedb.org/3/tv/${category}?api_key=6631e5f1dc96088e0d26b86da29b5b6a&include_adult=false&language=en-US&page=${page}`);
 	    const data = await response.json();
 		console.log(data);
 		return (data);
@@ -31,27 +33,41 @@ async function getSeries(category) {
 	  }
 }
 
-function createList(series) {
-	listHTML.innerHTML = "";
+function createCard(serie) {
 	let poster;
-	series.results.forEach(serie => {
-		(serie.poster_path) ? poster = serie.poster_path : poster = `https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-1-300x450.jpg`;
-		const div = document.createElement("div");
-		div.className += "serie";
-		div.dataset.id = serie.id;
-		div.innerHTML = `
-		<div class="title">${serie.name}</div>
-        <div class="img">
-		<img src="http://image.tmdb.org/t/p/w500${poster}" alt="">
-        </div>
-		<div class="vote">${serie.vote_average}/10</div>
-		`
-		listHTML.append(div);
+	(serie.poster_path) ? poster = `http://image.tmdb.org/t/p/w500${serie.poster_path}` : poster = `https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-1-300x450.jpg`;
+	const div = document.createElement("div");
+	div.className += "serie";
+	div.dataset.id = serie.id;
+	div.innerHTML = `
+	<div class="title">${serie.name}</div>
+	<div class="img">
+	<img src="${poster}" alt="">
+	</div>
+	<div class="vote">${serie.vote_average}/10</div>
+	`
+	listHTML.append(div);
+	requestAnimationFrame(() => {
+		setTimeout(() => {
+			div.classList.add("visible");
+		}, 1);
+	});
+}
+
+function createList(series, erase = 1) {
+	if (erase) {
+		listHTML.innerHTML = "";
+	}
+	series.results.forEach((serie, index)=> {
+		setTimeout(() => {
+			createCard(serie);
+		},index * 100);
 	});
 }
 
 function addactive(target, category) {
 	if (currentbtn != category) {
+		page = 1;
 		const btn = document.querySelector(`[data-category="${currentbtn}"]`)
 		console.log(btn);
 		btn.classList.remove("active");
@@ -97,4 +113,10 @@ listHTML.addEventListener("click", (e)=> {
 		localStorage.setItem("id", JSON.stringify(current));
 		window.location.href = 'description.html';
 	}
+})
+
+btnMore.addEventListener("click", async ()=> {
+	page++;
+	const series = await getSeries(currentbtn, page);
+	createList(series, 0);
 })

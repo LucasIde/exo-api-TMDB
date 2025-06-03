@@ -14,15 +14,15 @@ async function getDetails(id) {
 
 function printDetails(details) {
 	let back;
-	(details.backdrop_path) ? back = details.backdrop_path : back = `https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-1-300x450.jpg`;
+	(details.backdrop_path) ? back = `http://image.tmdb.org/t/p/w500${details.backdrop_path}` : back = `https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-1-300x450.jpg`;
 	const div = document.createElement("div");
 	div.classList.add("details");
 	div.innerHTML = `
-		<div class="details__img"><img src="http://image.tmdb.org/t/p/w500${back}" alt=""></div>
+		<div class="details__img"><img src="${back}" alt=""></div>
 		<div class="txt">
 			<div class="txt__name">${details.name}</div>
 			<div class="txt__genres">genre : </div>
-			<div class="txt__overview">resume : ${details.overview}</div>
+			<div class="txt__overview">${details.overview}</div>
 			<div class="txt__global">
 				<div class="first">first appearance : <span>${details.first_air_date}</span></div>
 				<div class="status">status : <span>${details.status}</span></div>
