@@ -74,6 +74,8 @@ function addactive(target, category) {
 		currentbtn = category;
 		target.classList.add("active");
 	}
+	current.btn = currentbtn;
+	localStorage.setItem("id", JSON.stringify(current));
 }
 
 async function init(category = "top_rated"){
