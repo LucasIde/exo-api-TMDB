@@ -8,7 +8,12 @@ const listHTML = document.querySelector(".list")
 // 🌍 Variables globales
 // ==============================
 
+const current = {
+	id : '',
+	btn : ''
+}
 
+let currentbtn;
 
 // ==============================
 // 🎊 Fonctionnalités
@@ -33,23 +38,63 @@ function createList(series) {
 		(serie.poster_path) ? poster = serie.poster_path : poster = `https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-1-300x450.jpg`;
 		const div = document.createElement("div");
 		div.className += "serie";
+		div.dataset.id = serie.id;
 		div.innerHTML = `
 		<div class="title">${serie.name}</div>
         <div class="img">
-            <img src="http://image.tmdb.org/t/p/w500${poster}" alt="">
-        </div>`
+		<img src="http://image.tmdb.org/t/p/w500${poster}" alt="">
+        </div>
+		<div class="vote">${serie.vote_average}/10</div>
+		`
 		listHTML.append(div);
 	});
+}
+
+function addactive(target, category) {
+	if (currentbtn != category) {
+		const btn = document.querySelector(`[data-category="${currentbtn}"]`)
+		console.log(btn);
+		btn.classList.remove("active");
+		currentbtn = category;
+		target.classList.add("active");
+	}
+}
+
+async function init(category = "top_rated"){
+	currentbtn = "top_rated";
+	const local = JSON.parse(localStorage.getItem("id"));
+	if (local) {
+		category = local.btn;
+	}
+	console.log(category);
+	addactive(document.querySelector(`[data-category="${category}"]`), category);
+	currentbtn = category;
+	const series = await getSeries(category);
+	createList(series);
 }
 
 // ==============================
 // 🧲 Événements
 // ==============================
 
+init()
+
 btnAll.addEventListener("click", async (e) => {
 	if (e.target.matches("button")) {
 		const category = e.target.dataset.category;
+		addactive(e.target, category);
 		const series = await getSeries(category);
 		createList(series);
+	}
+})
+
+listHTML.addEventListener("click", (e)=> {
+	const target = (e.target.closest(".serie"));
+	if (target) {
+		const id = target.dataset.id;
+		current.id = id;
+		current.btn = currentbtn;
+		localStorage.setItem("id", JSON.stringify(current));
+		window.location.href = 'description.html';
 	}
 })
