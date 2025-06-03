@@ -16,6 +16,8 @@ const current = {
 
 let currentbtn;
 let page = 1;
+let timeout = [];
+
 
 // ==============================
 // 🎊 Fonctionnalités
@@ -55,13 +57,18 @@ function createCard(serie) {
 }
 
 function createList(series, erase = 1) {
+	timeout.forEach(element => {
+		clearTimeout(element)
+	});
+	timeout = [];
 	if (erase) {
 		listHTML.innerHTML = "";
 	}
 	series.results.forEach((serie, index)=> {
-		setTimeout(() => {
+		const tmp = setTimeout(() => {
 			createCard(serie);
 		},index * 100);
+		timeout.push(tmp);
 	});
 }
 
