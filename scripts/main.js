@@ -3,7 +3,6 @@
 // ==============================
 const btnAll = document.querySelector(".btnWrapper");
 const listHTML = document.querySelector(".list")
-const btnMore = document.querySelector(".more")
 
 // ==============================
 // 🌍 Variables globales
@@ -124,8 +123,9 @@ listHTML.addEventListener("click", (e)=> {
 	}
 })
 
-btnMore.addEventListener("click", async ()=> {
+addEventListener("scrollend", async ()=> {
 	page++;
 	const series = await getSeries(currentbtn, page);
 	createList(series, 0);
+	setTimeout("", 2000);
 })
